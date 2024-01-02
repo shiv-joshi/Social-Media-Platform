@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %}
+{% block content %}
+<h1 align="center">Your Feed</h1>
+<ul class="list-group list-group-flush" id="posts">
+    {% for user in users %}
+        {% for post in user.posts %}
+            <li class="list-group-item border">
+                <strong>{{ user.first_name }}</strong>:
+
+                {% if user == current_user %}
+                    <!-- Editable input box for the post.data -->
+                    <div class="input-group mt-2">
+                        <input type="text" class="form-control" value="{{ post.data }}" id="editPost{{ post.id }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="button" onClick="editPost('{{ post.id }}', $('#editPost{{ post.id }}').val())">Submit Changes</button>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Display post.data for other users -->
+                    <div>{{ post.data }}</div>
+                {% endif %}
+                
+                {% for comment in post.comments %}
+                    <div class="ml-4 mt-2">
+                        <small class="text-muted">
+                            {{ users_mapping[comment.user_id].first_name }}: {{ comment.data }}
+                        </small>
+                    </div>
+                {% endfor %}
+
+                <!-- Add comments -->
+                <div class="input-group mt-2">
+                    <input type="text" class="form-control" placeholder="Add a comment..." id="commentInput{{ post.id }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onClick="addComment('{{ post.id }}', $('#commentInput{{ post.id }}').val())">Comment</button>
+                    </div>
+                </div>
+
+                <!-- Can only edit/delete a post if you made it -->
+                <br />
+                {% if user == current_user %}
+                    <button type="button" class="close" onClick="deletePost('{{ post.id }}')">
+                        Delete
+                    </button>
+                {% endif %}
+            </li>
+            <br />
+        {% endfor %}
+    {% endfor %}
+</ul>
+<form method="POST">
+    <textarea name="post" id="post" class="form-control"></textarea>
+    <br />
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add Post</button>
+    </div>
+</form>
+{% endblock %}

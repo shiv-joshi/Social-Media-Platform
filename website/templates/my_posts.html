@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %} 
+{% block content %}
+    <h1 align="center">Your posts!</h1>
+    {% if not user.posts %}
+        <div align="center" class="alert alert-info" role="alert">
+            Nothing to see here. Post something to have it appear here!
+        </div>      
+    {% endif %}
+    {% for post in user.posts %}
+        <li class="list-group-item border">
+            <strong>{{ user.first_name }}</strong>:
+            <div>{{ post.data }}</div>
+            
+            {% for comment in post.comments %}
+                <div class="ml-4 mt-2">
+                    <small class="text-muted">
+                        {{ users_mapping[comment.user_id].first_name }}: {{ comment.data }}
+                    </small>
+                </div>
+            {% endfor %}
+
+            {% if user == current_user %}
+                <br />
+                <button type="button" class="close" onClick="deletePost('{{ post.id }}')">
+                    Delete
+                </button>
+                <br />
+            {% endif %}
+        </li>
+        <br />
+    {% endfor %}
+{% endblock %}
